@@ -56,3 +56,6 @@ debian/compat
 debian/*.log
 debian/files
 debian/perftest
+
+#Add by Albert
+.vscode/
