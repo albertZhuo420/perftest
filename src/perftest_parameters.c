@@ -806,11 +806,12 @@ static void init_perftest_params(struct perftest_parameters *user_param)
 	user_param->check_alive_exited		= 0;
 	user_param->raw_mcast			= 0;
 	user_param->cache_line_size		= get_cache_line_size();
-	user_param->cycle_buffer		= sysconf(_SC_PAGESIZE);
 
+	user_param->cycle_buffer		= sysconf(_SC_PAGESIZE);
 	if (user_param->cycle_buffer <= 0) {
 		user_param->cycle_buffer = DEF_PAGE_SIZE;
 	}
+
 	user_param->use_res_domain		= 0;
 	user_param->mr_per_qp			= 0;
 	user_param->dlid			= 0;
@@ -993,7 +994,8 @@ void flow_rules_force_dependecies(struct perftest_parameters *user_param)
 			fprintf(stderr, " Flows is currently designed to work with unidir tests only\n");
 			exit(FAILURE);
 		}
-	} else {
+	} 
+	else {
 		if (user_param->flows_burst  > 1) {
 			fprintf(stderr, " Flows burst is designed to work with more then single flow\n");
 			exit(FAILURE);
@@ -2114,92 +2116,92 @@ void set_raw_eth_parameters(struct perftest_parameters *user_param)
  ******************************************************************************/
 int parser(struct perftest_parameters *user_param,char *argv[], int argc)
 {
-	int c,size_len;
-	int size_factor = 1;
-	static int run_inf_flag = 0;
-	static int report_fmt_flag = 0;
-	static int srq_flag = 0;
-	static int report_both_flag = 0;
-	static int is_reversed_flag = 0;
-	static int pkey_flag = 0;
-	static int inline_recv_flag = 0;
-	static int tcp_flag = 0;
-	static int burst_size_flag = 0;
-	static int typical_pkt_size_flag = 0;
-	static int rate_limit_flag = 0;
-	static int rate_units_flag = 0;
-	static int rate_limit_type_flag = 0;
-	static int verbosity_output_flag = 0;
-	static int cpu_util_flag = 0;
-	static int out_json_flag = 0;
-	static int out_json_file_flag = 0;
-	static int latency_gap_flag = 0;
-	static int flow_label_flag = 0;
-	static int retry_count_flag = 0;
+	int c, size_len;
+	int 	   size_factor 			   = 1;
+	static int run_inf_flag 		   = 0;
+	static int report_fmt_flag 		   = 0;
+	static int srq_flag 			   = 0;
+	static int report_both_flag 	   = 0;
+	static int is_reversed_flag 	   = 0;
+	static int pkey_flag 			   = 0;
+	static int inline_recv_flag 	   = 0;
+	static int tcp_flag 			   = 0;
+	static int burst_size_flag 		   = 0;
+	static int typical_pkt_size_flag   = 0;
+	static int rate_limit_flag 		   = 0;
+	static int rate_units_flag 		   = 0;
+	static int rate_limit_type_flag    = 0;
+	static int verbosity_output_flag   = 0;
+	static int cpu_util_flag 		   = 0;
+	static int out_json_flag 		   = 0;
+	static int out_json_file_flag 	   = 0;
+	static int latency_gap_flag 	   = 0;
+	static int flow_label_flag 		   = 0;
+	static int retry_count_flag 	   = 0;
 	static int dont_xchg_versions_flag = 0;
 #ifdef HAVE_CUDA
-	static int use_cuda_flag = 0;
+	static int use_cuda_flag 		= 0;
 	static int use_cuda_bus_id_flag = 0;
 #ifdef HAVE_CUDA_DMABUF
 	static int use_cuda_dmabuf_flag = 0;
 #endif
 #endif
 #ifdef HAVE_ROCM
-	static int use_rocm_flag = 0;
+	static int use_rocm_flag 	= 0;
 #endif
-	static int disable_pcir_flag = 0;
-	static int mmap_file_flag = 0;
-	static int mmap_offset_flag = 0;
-	static int ipv6_flag = 0;
-	static int raw_ipv6_flag = 0;
+	static int disable_pcir_flag    = 0;
+	static int mmap_file_flag 	    = 0;
+	static int mmap_offset_flag     = 0;
+	static int ipv6_flag 		    = 0;
+	static int raw_ipv6_flag 	    = 0;
 	static int report_per_port_flag = 0;
-	static int odp_flag = 0;
-	static int hugepages_flag = 0;
-	static int old_post_send_flag = 0;
+	static int odp_flag 			= 0;
+	static int hugepages_flag 		= 0;
+	static int old_post_send_flag 	= 0;
 	static int use_promiscuous_flag = 0;
-	static int use_sniffer_flag = 0;
-	static int raw_mcast_flag = 0;
-	static int use_res_domain_flag = 0;
-	static int mr_per_qp_flag = 0;
-	static int dlid_flag = 0;
-	static int tclass_flag = 0;
-	static int wait_destroy_flag = 0;
-	static int flows_flag = 0;
-	static int flows_burst_flag = 0;
-	static int force_link_flag = 0;
-	static int source_ip_flag = 0;
-	static int local_ip_flag = 0;
-	static int remote_ip_flag = 0;
-	static int local_port_flag = 0;
-	static int remote_port_flag = 0;
-	static int local_mac_flag = 0;
-	static int remote_mac_flag = 0;
-	static int reply_every_flag = 0;
+	static int use_sniffer_flag 	= 0;
+	static int raw_mcast_flag 		= 0;
+	static int use_res_domain_flag 	= 0;
+	static int mr_per_qp_flag 		= 0;
+	static int dlid_flag 			= 0;
+	static int tclass_flag 			= 0;
+	static int wait_destroy_flag 	= 0;
+	static int flows_flag 			= 0;
+	static int flows_burst_flag 	= 0;
+	static int force_link_flag 		= 0;
+	static int source_ip_flag 		= 0;
+	static int local_ip_flag 		= 0;
+	static int remote_ip_flag 		= 0;
+	static int local_port_flag 		= 0;
+	static int remote_port_flag 	= 0;
+	static int local_mac_flag 		= 0;
+	static int remote_mac_flag 		= 0;
+	static int reply_every_flag 	= 0;
 	static int perform_warm_up_flag = 0;
-	static int use_ooo_flag = 0;
-	static int vlan_en = 0;
-	static int vlan_pcp_flag = 0;
-	static int recv_post_list_flag = 0;
+	static int use_ooo_flag 		= 0;
+	static int vlan_en 				= 0;
+	static int vlan_pcp_flag 		= 0;
+	static int recv_post_list_flag 	= 0;
 	#ifdef HAVE_DCS
-	static int log_dci_streams_flag = 0;
-	static int log_active_dci_streams_flag = 0;
+	static int log_dci_streams_flag 					= 0;
+	static int log_active_dci_streams_flag 				= 0;
 	static int log_active_dci_streams_flag_was_ever_set = 0;
 	#endif
 	#ifdef HAVE_AES_XTS
-	static int aes_xts_flag = 0;
-	static int encrypt_on_tx_flag = 0;
-	static int sig_before_flag = 0;
-	static int aes_block_size_flag = 0;
-	static int data_enc_keys_number_flag = 0;
-	static int kek_path_flag = 0;
-	static int credentials_path_flag = 0;
+	static int aes_xts_flag 			  = 0;
+	static int encrypt_on_tx_flag 		  = 0;
+	static int sig_before_flag 			  = 0;
+	static int aes_block_size_flag 		  = 0;
+	static int data_enc_keys_number_flag  = 0;
+	static int kek_path_flag 			  = 0;
+	static int credentials_path_flag 	  = 0;
 	static int data_enc_key_app_path_flag = 0;
 	#endif
 
-	char *server_ip = NULL;
-	char *client_ip = NULL;
-	char *local_ip = NULL;
-	char *remote_ip = NULL;
+	char *server_ip   = NULL;
+	char *client_ip   = NULL;
+	char *local_ip 	  = NULL;
+	char *remote_ip   = NULL;
 	char *not_int_ptr = NULL;
 
 	init_perftest_params(user_param);
@@ -2211,31 +2213,31 @@ int parser(struct perftest_parameters *user_param,char *argv[], int argc)
 		static const struct option long_options[] = {
 			{ .name = "port",		.has_arg = 1, .val = 'p' },
 			{ .name = "ib-dev",		.has_arg = 1, .val = 'd' },
-			{ .name = "ib-port",		.has_arg = 1, .val = 'i' },
+			{ .name = "ib-port",	.has_arg = 1, .val = 'i' },
 			{ .name = "mtu",		.has_arg = 1, .val = 'm' },
 			{ .name = "size",		.has_arg = 1, .val = 's' },
 			{ .name = "iters",		.has_arg = 1, .val = 'n' },
-			{ .name = "tx-depth",		.has_arg = 1, .val = 't' },
-			{ .name = "qp-timeout",		.has_arg = 1, .val = 'u' },
+			{ .name = "tx-depth",	.has_arg = 1, .val = 't' },
+			{ .name = "qp-timeout",	.has_arg = 1, .val = 'u' },
 			{ .name = "sl",			.has_arg = 1, .val = 'S' },
-			{ .name = "gid-index",		.has_arg = 1, .val = 'x' },
+			{ .name = "gid-index",	.has_arg = 1, .val = 'x' },
 			{ .name = "all",		.has_arg = 0, .val = 'a' },
-			{ .name = "CPU-freq",		.has_arg = 0, .val = 'F' },
-			{ .name = "connection",		.has_arg = 1, .val = 'c' },
+			{ .name = "CPU-freq",	.has_arg = 0, .val = 'F' },
+			{ .name = "connection",	.has_arg = 1, .val = 'c' },
 			{ .name = "qp",			.has_arg = 1, .val = 'q' },
 			{ .name = "events",		.has_arg = 0, .val = 'e' },
 			{ .name = "vector",		.has_arg = 1, .val = 'X' },
-			{ .name = "inline_size",	.has_arg = 1, .val = 'I' },
+			{ .name = "inline_size",.has_arg = 1, .val = 'I' },
 			{ .name = "outs",		.has_arg = 1, .val = 'o' },
 			{ .name = "mcg",		.has_arg = 0, .val = 'g' },
-			{ .name = "comm_rdma_cm",	.has_arg = 0, .val = 'z' },
-			{ .name = "rdma_cm",		.has_arg = 0, .val = 'R' },
+			{ .name = "comm_rdma_cm",.has_arg = 0, .val = 'z' },
+			{ .name = "rdma_cm",	.has_arg = 0, .val = 'R' },
 			{ .name = "tos",		.has_arg = 1, .val = 'T' },
-			{ .name = "hop_limit",		.has_arg = 1, .val = 'L' },
+			{ .name = "hop_limit",	.has_arg = 1, .val = 'L' },
 			{ .name = "help",		.has_arg = 0, .val = 'h' },
 			{ .name = "MGID",		.has_arg = 1, .val = 'M' },
-			{ .name = "rx-depth",		.has_arg = 1, .val = 'r' },
-			{ .name = "bidirectional",	.has_arg = 0, .val = 'b' },
+			{ .name = "rx-depth",	.has_arg = 1, .val = 'r' },
+			{ .name = "bidirectional",.has_arg = 0, .val = 'b' },
 			{ .name = "cq-mod",		.has_arg = 1, .val = 'Q' },
 			{ .name = "noPeak",		.has_arg = 0, .val = 'N' },
 			{ .name = "version",		.has_arg = 0, .val = 'V' },
@@ -2364,8 +2366,8 @@ int parser(struct perftest_parameters *user_param,char *argv[], int argc)
 				  }
 				  break;
 			case 'm': CHECK_VALUE(user_param->mtu,int,"MTU",not_int_ptr); break;
-			case 'n': CHECK_VALUE_IN_RANGE(user_param->iters,int,MIN_ITER,MAX_ITER,"Iteration num",not_int_ptr); break;
-			case 't': CHECK_VALUE_IN_RANGE(user_param->tx_depth,int,MIN_TX,MAX_TX,"Tx depth",not_int_ptr); break;
+			case 'n': CHECK_VALUE_IN_RANGE(user_param->iters, int, MIN_ITER, MAX_ITER, "Iteration num", not_int_ptr); break;
+			case 't': CHECK_VALUE_IN_RANGE(user_param->tx_depth, int, MIN_TX, MAX_TX, "Tx depth", not_int_ptr); break;
 			case 'T': CHECK_VALUE_IN_RANGE(user_param->tos,int,MIN_TOS,MAX_TOS,"TOS",not_int_ptr); break;
 			case 'L': CHECK_VALUE_IN_RANGE(user_param->hop_limit,int,MIN_HOP_LIMIT,MAX_HOP_LIMIT,"Hop Limit",not_int_ptr); break;
 			case 'u': CHECK_VALUE(user_param->qp_timeout,uint8_t,"QP Timeout",not_int_ptr); break;
@@ -2399,13 +2401,13 @@ int parser(struct perftest_parameters *user_param,char *argv[], int argc)
 				  }
 				  break;
 			case 'M': GET_STRING(user_param->user_mgid,strdupa(optarg)); break;
-			case 'r': CHECK_VALUE_IN_RANGE(user_param->rx_depth,int,MIN_RX,MAX_RX," Rx depth",not_int_ptr);
+			case 'r': CHECK_VALUE_IN_RANGE(user_param->rx_depth, int, MIN_RX, MAX_RX, " Rx depth", not_int_ptr);
 				  if (user_param->verb != SEND && user_param->rx_depth > DEF_RX_RDMA) {
 					  fprintf(stderr," On RDMA verbs rx depth can be only 1\n");
 					  return 1;
 				  }
 				  break;
-			case 'Q': CHECK_VALUE_IN_RANGE(user_param->cq_mod,int,MIN_CQ_MOD,MAX_CQ_MOD,"CQ moderation",not_int_ptr);
+			case 'Q': CHECK_VALUE_IN_RANGE(user_param->cq_mod, int, MIN_CQ_MOD, MAX_CQ_MOD, "CQ moderation", not_int_ptr);
 				  user_param->req_cq_mod = 1;
 				  break;
 			case 'A':
@@ -2426,7 +2428,7 @@ int parser(struct perftest_parameters *user_param,char *argv[], int argc)
 					  exit(1);
 				  }
 				  break;
-			case 'l': CHECK_VALUE(user_param->post_list,int,"Send Post List size",not_int_ptr); break;
+			case 'l': CHECK_VALUE(user_param->post_list, int, "Send Post List size", not_int_ptr); break;
 			case 'D': CHECK_VALUE_POSITIVE(user_param->duration,int,"Duration period",not_int_ptr);
 				  user_param->test_type = DURATION;
 				  break;
@@ -2447,13 +2449,13 @@ int parser(struct perftest_parameters *user_param,char *argv[], int argc)
 			case 'z': user_param->use_rdma_cm = ON; break;
 			case 'R': user_param->work_rdma_cm = ON; break;
 			case 's': size_len = (int)strlen(optarg);
-				  if (optarg[size_len-1] == 'K') {
-					  optarg[size_len-1] = '\0';
+				  if (optarg[size_len - 1] == 'K') {
+					  optarg[size_len - 1] = '\0';
 					  size_factor = 1024;
 				  }
-				  if (optarg[size_len-1] == 'M') {
-					  optarg[size_len-1] = '\0';
-					  size_factor = 1024*1024;
+				  if (optarg[size_len - 1] == 'M') {
+					  optarg[size_len - 1] = '\0';
+					  size_factor = 1024 * 1024;
 				  }
 				  user_param->size = (uint64_t)strtol(optarg, NULL, 0) * size_factor;
 				  user_param->req_size = 1;

@@ -114,13 +114,12 @@
  * for small message size (under 4K) , we allocate 4K buffer , and the RDMA write
  * verb will write in cycle on the buffer. this improves the BW in "Nahalem" systems.
  */
-#define BUFF_SIZE(size,cycle_buffer) ((size < cycle_buffer) ? (cycle_buffer) : (size))
+#define BUFF_SIZE(size, cycle_buffer) ((size < cycle_buffer) ? (cycle_buffer) : (size))
 
 /* UD addition to the buffer. */
 #define IF_UD_ADD(type,cache_line_size) ((type == UD) ? (cache_line_size) : (0))
 
-#define ROUND_UP(value, alignment) (((value) % (alignment) == 0) ?  \
-		(value) : ((alignment) * ((value) / (alignment) + 1)))
+#define ROUND_UP(value, alignment) (((value) % (alignment) == 0) ? (value) : ((alignment) * ((value) / (alignment) + 1)))
 
 /* Macro that defines the address where we write in RDMA.
  * If message size is smaller then CACHE_LINE size then we write in CACHE_LINE jumps.
@@ -157,7 +156,7 @@ struct cma {
 
 struct pingpong_context {
 	struct cma cma_master;
-	struct rdma_event_channel		*cm_channel;
+	struct rdma_event_channel	*cm_channel;
 	struct rdma_cm_id			*cm_id_control;
 	struct rdma_cm_id			*cm_id;
 	struct ibv_context			*context;
@@ -165,16 +164,16 @@ struct pingpong_context {
 	struct mlx5dv_mkey			**mkey;
 	struct mlx5dv_dek			**dek;
 	#endif
-	struct ibv_comp_channel			*channel;
+	struct ibv_comp_channel		*channel;
 	struct ibv_pd				*pd;
 	struct ibv_mr				**mr;
 	struct ibv_cq				*send_cq;
 	struct ibv_cq				*recv_cq;
-	void					**buf;
+	void						**buf;
 	#ifdef HAVE_CUDA
 	#ifdef HAVE_CUDA_DMABUF
-	int					*cuda_buf_dmabuf_fd;
-	uint64_t				*cuda_buf_dmabuf_offset;
+	int							*cuda_buf_dmabuf_fd;
+	uint64_t					*cuda_buf_dmabuf_offset;
 	#endif
 	#endif
 	struct ibv_ah				**ah;
@@ -187,40 +186,40 @@ struct pingpong_context {
 	int (*new_post_send_work_request_func_pointer) (struct pingpong_context *ctx, int index,
 		struct perftest_parameters *user_param);
 	#endif
-	struct ibv_srq				*srq;
-	struct ibv_sge				*sge_list;
-	struct ibv_sge				*recv_sge_list;
-	struct ibv_send_wr			*wr;
-	struct ibv_recv_wr			*rwr;
-	uint64_t				size;
-	uint64_t				*my_addr;
-	uint64_t				*rx_buffer_addr;
-	uint64_t				*rem_addr;
-	uint32_t 				*rem_qpn;
-	uint64_t				buff_size;
-	uint64_t				send_qp_buff_size;
-	uint64_t				flow_buff_size;
+	struct ibv_srq		*srq;
+	struct ibv_sge		*sge_list;
+	struct ibv_sge		*recv_sge_list;
+	struct ibv_send_wr	*wr;
+	struct ibv_recv_wr	*rwr;
+	uint64_t			size;
+	uint64_t			*my_addr;
+	uint64_t			*rx_buffer_addr;
+	uint64_t			*rem_addr;
+	uint32_t 			*rem_qpn;
+	uint64_t			buff_size;
+	uint64_t			send_qp_buff_size;
+	uint64_t			flow_buff_size;
 	int					tx_depth;
 	int					huge_shmid;
-	uint64_t				*scnt;
-	uint64_t				*ccnt;
+	uint64_t			*scnt;
+	uint64_t			*ccnt;
 	int					is_contig_supported;
-	uint32_t				*r_dctn;
-	uint32_t				*dci_stream_id;
-	int 					dek_number;
-	uint32_t                                *ctrl_buf;
-	uint32_t                                *credit_buf;
-	struct ibv_mr                           *credit_mr;
-	struct ibv_sge                          *ctrl_sge_list;
-	struct ibv_send_wr                      *ctrl_wr;
-	int                                     send_rcredit;
-	int                                     credit_cnt;
+	uint32_t			*r_dctn;
+	uint32_t			*dci_stream_id;
+	int 				dek_number;
+	uint32_t            *ctrl_buf;
+	uint32_t            *credit_buf;
+	struct ibv_mr       *credit_mr;
+	struct ibv_sge      *ctrl_sge_list;
+	struct ibv_send_wr  *ctrl_wr;
+	int                 send_rcredit;
+	int                 credit_cnt;
 	int					cache_line_size;
 	int					cycle_buffer;
 	int					rposted;
 	#ifdef HAVE_XRCD
-	struct ibv_xrcd				*xrc_domain;
-	int 					fd;
+	struct ibv_xrcd		*xrc_domain;
+	int 				fd;
 	#endif
 };
 
@@ -230,10 +229,10 @@ struct pingpong_context {
 	int 				qpn;
 	int 				psn;
 	unsigned			rkey;
-	unsigned long long		vaddr;
-	union ibv_gid			gid;
+	unsigned long long	vaddr;
+	union ibv_gid		gid;
 	unsigned			srqn;
-	int				gid_index;
+	int					gid_index;
  };
 
 /******************************************************************************
@@ -753,23 +752,28 @@ static __inline void increase_rem_addr(struct ibv_send_wr *wr,int size,uint64_t 
  *
  * Description :
  * 	Increases the local address in all verbs ,
- *  (at least 64 CACHE_LINE size) , so that the system will be a able to cahce the data
+ *  (at least 64 CACHE_LINE size) , so that the system will be a able to cache the data
  *  in an orginzed way.
  *
  * Parameters :
  *		sg - The scatter element of the wqe.
  *		size - size of the message to send.
- *		rcnt - The ammount of post_send or post_receive we called.
+ *		rcnt - The amount of post_send or post_receive we called.
  *		prim_addr - The address of the original buffer.
  *		server_is_ud - Indication to weather we are in UD mode.
  */
-static __inline void increase_loc_addr(struct ibv_sge *sg,int size,uint64_t rcnt,uint64_t prim_addr,int server_is_ud, int cache_line_size, int cycle_buffer)
+static __inline void increase_loc_addr(struct ibv_sge *sg,
+									   int size,
+									   uint64_t rcnt,
+									   uint64_t prim_addr,
+									   int server_is_ud,
+									   int cache_line_size,
+									   int cycle_buffer)
 {
-	sg->addr  += INC(size,cache_line_size);
+	sg->addr += INC(size, cache_line_size);
 
-	if ( ((rcnt+1) % (cycle_buffer/ INC(size,cache_line_size))) == 0 )
+	if (((rcnt + 1) % (cycle_buffer / INC(size, cache_line_size))) == 0)
 		sg->addr = prim_addr;
-
 }
 
 /* catch_alarm.

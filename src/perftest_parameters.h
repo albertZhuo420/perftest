@@ -297,9 +297,14 @@ t_stdev: %.2f,\npercentile_99: %.2f,\npercentile_99.9: %.2f,\n"
 }
 
 /* Macro for allocating. */
-#define ALLOCATE(var,type,size)                                     \
-{ if((var = (type*)malloc(sizeof(type)*(size))) == NULL)        \
-	{ fprintf(stderr," Cannot Allocate\n"); exit(1);}}
+#define ALLOCATE(var, type, size)                                  \
+	{                                                              \
+		if ((var = (type *)malloc(sizeof(type) * (size))) == NULL) \
+		{                                                          \
+			fprintf(stderr, " Cannot Allocate\n");                 \
+			exit(1);                                               \
+		}                                                          \
+	}
 
 /* Macro for allocating in alloc_ctx function */
 #define ALLOC(var,type,size)									\
@@ -597,7 +602,7 @@ struct perftest_parameters {
 	int				check_alive_exited;
 	int				raw_mcast;
 	int				masked_atomics;
-	int				cycle_buffer;
+	int				cycle_buffer; /* sysconf(_SC_PAGESIZE); */
 	int				cache_line_size;
 	int				use_res_domain;
 	int				mr_per_qp;

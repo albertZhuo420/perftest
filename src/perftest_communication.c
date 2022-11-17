@@ -1381,38 +1381,37 @@ int ctx_hand_shake(struct perftest_comm *comm,
 		struct pingpong_dest *my_dest,
 		struct pingpong_dest *rem_dest)
 {
-	int (*read_func_ptr) (struct pingpong_dest*,struct perftest_comm*);
-	int (*write_func_ptr)(struct pingpong_dest*,struct perftest_comm*);
+	int (*read_func_ptr) (struct pingpong_dest *, struct perftest_comm *);
+	int (*write_func_ptr)(struct pingpong_dest *, struct perftest_comm *);
 
 	if (comm->rdma_params->use_rdma_cm || comm->rdma_params->work_rdma_cm) {
 		read_func_ptr  = &rdma_read_keys;
 		write_func_ptr = &rdma_write_keys;
 
-	} else {
+	} 
+	else {
 		read_func_ptr  = &ethernet_read_keys;
 		write_func_ptr = &ethernet_write_keys;
-
 	}
 
 	rem_dest->gid_index = my_dest->gid_index;
 	if (comm->rdma_params->servername) {
-		if ((*write_func_ptr)(my_dest,comm)) {
+		if ((*write_func_ptr)(my_dest, comm)) {
 			fprintf(stderr," Unable to write to socket/rdma_cm\n");
 			return 1;
 		}
-		if ((*read_func_ptr)(rem_dest,comm)) {
+		if ((*read_func_ptr)(rem_dest, comm)) {
 			fprintf(stderr," Unable to read from socket/rdma_cm\n");
 			return 1;
 		}
-
 		/*Server side will wait for the client side to reach the write function.*/
-	} else {
-
-		if ((*read_func_ptr)(rem_dest,comm)) {
+	} 
+	else {
+		if ((*read_func_ptr)(rem_dest, comm)) {
 			fprintf(stderr," Unable to read to socket/rdma_cm\n");
 			return 1;
 		}
-		if ((*write_func_ptr)(my_dest,comm)) {
+		if ((*write_func_ptr)(my_dest, comm)) {
 			fprintf(stderr," Unable to write from socket/rdma_cm\n");
 			return 1;
 		}
@@ -1421,16 +1420,13 @@ int ctx_hand_shake(struct perftest_comm *comm,
 	return 0;
 }
 
-
-
-
-
 /******************************************************************************
  *
  ******************************************************************************/
-int ctx_xchg_data_ethernet( struct perftest_comm *comm,
-		void *my_data,
-		void *rem_data,int size)
+int ctx_xchg_data_ethernet(struct perftest_comm *comm,
+						   void *my_data,
+						   void *rem_data, 
+						   int size)
 {
 	if (comm->rdma_params->servername) {
 		if (ethernet_write_data(comm, (char *) my_data, size)) {
@@ -1708,13 +1704,13 @@ void xchg_bw_reports (struct perftest_comm *comm, struct bw_report_data *my_bw_r
  *
  ******************************************************************************/
 void ctx_print_pingpong_data(struct pingpong_dest *element,
-		struct perftest_comm *comm)
+							 struct perftest_comm *comm)
 {
 	int is_there_mgid,local_mgid,remote_mgid;
 
 	/* use dlid value from user (if user specified and only on the remote side) */
 	uint16_t dlid = (comm->rdma_params->dlid && comm->rdma_params->side) ?
-				comm->rdma_params->dlid : element->lid;
+					 comm->rdma_params->dlid : element->lid;
 
 	if (comm->rdma_params->output != FULL_VERBOSITY)
 		return;
@@ -1729,7 +1725,8 @@ void ctx_print_pingpong_data(struct pingpong_dest *element,
 
 	if (comm->rdma_params->use_xrc) {
 		printf(XRC_FMT,element->srqn);
-	} else if (comm->rdma_params->connection_type == DC){
+	} 
+	else if (comm->rdma_params->connection_type == DC){
 		printf(DC_FMT,element->srqn);
 	}
 
@@ -1739,17 +1736,18 @@ void ctx_print_pingpong_data(struct pingpong_dest *element,
 	remote_mgid   = (comm->rdma_params->side == 1)  && (comm->rdma_params->machine == 1);
 	is_there_mgid =  comm->rdma_params->duplex || remote_mgid || local_mgid;
 
-	if ((comm->rdma_params->gid_index > -1 || (comm->rdma_params->use_mcg && is_there_mgid)) && comm->rdma_params->connection_type != RawEth) {
-
-		printf(PERF_GID_FMT,gidArray[comm->rdma_params->use_mcg && is_there_mgid],
-				element->gid.raw[0], element->gid.raw[1],
-				element->gid.raw[2], element->gid.raw[3],
-				element->gid.raw[4], element->gid.raw[5],
-				element->gid.raw[6], element->gid.raw[7],
-				element->gid.raw[8], element->gid.raw[9],
-				element->gid.raw[10],element->gid.raw[11],
-				element->gid.raw[12],element->gid.raw[13],
-				element->gid.raw[14],element->gid.raw[15]);
+	if ((comm->rdma_params->gid_index > -1 || (comm->rdma_params->use_mcg && is_there_mgid)) &&
+		comm->rdma_params->connection_type != RawEth)
+	{
+		printf(PERF_GID_FMT, gidArray[comm->rdma_params->use_mcg && is_there_mgid],
+			   element->gid.raw[0], element->gid.raw[1],
+			   element->gid.raw[2], element->gid.raw[3],
+			   element->gid.raw[4], element->gid.raw[5],
+			   element->gid.raw[6], element->gid.raw[7],
+			   element->gid.raw[8], element->gid.raw[9],
+			   element->gid.raw[10], element->gid.raw[11],
+			   element->gid.raw[12], element->gid.raw[13],
+			   element->gid.raw[14], element->gid.raw[15]);
 	}
 }
 
@@ -1757,8 +1755,8 @@ void ctx_print_pingpong_data(struct pingpong_dest *element,
  *
  ******************************************************************************/
 int ctx_close_connection(struct perftest_comm *comm,
-		struct pingpong_dest *my_dest,
-		struct pingpong_dest *rem_dest)
+						 struct pingpong_dest *my_dest,
+						 struct pingpong_dest *rem_dest)
 {
 	/*Signal client is finished.*/
 	if (ctx_hand_shake(comm,my_dest,rem_dest)) {
@@ -1785,8 +1783,13 @@ int ctx_close_connection(struct perftest_comm *comm,
  ******************************************************************************/
 void exchange_versions(struct perftest_comm *user_comm, struct perftest_parameters *user_param)
 {
+	int rc = 0;
 	if (!user_param->dont_xchg_versions) {
-		if (ctx_xchg_data(user_comm,(void*)(&user_param->version),(void*)(&user_param->rem_version),sizeof(user_param->rem_version))) {
+		rc = ctx_xchg_data(user_comm,
+						   (void *)(&user_param->version),
+						   (void *)(&user_param->rem_version),
+						   sizeof(user_param->rem_version));
+		if (rc) {
 			fprintf(stderr," Failed to exchange data between server and clients\n");
 			exit(1);
 		}
@@ -1798,9 +1801,9 @@ void exchange_versions(struct perftest_comm *user_comm, struct perftest_paramete
  ******************************************************************************/
 void check_version_compatibility(struct perftest_parameters *user_param)
 {
-	if ((atof(user_param->rem_version) < 5.70))
-	{
-		fprintf(stderr, "Current implementation is not compatible with versions older than 5.70\n");
+	if ((atof(user_param->rem_version) < 5.70)) {
+		fprintf(stderr,
+				"Current implementation is not compatible with versions older than 5.70\n");
 		exit(1);
 	}
 }
@@ -1810,6 +1813,7 @@ void check_version_compatibility(struct perftest_parameters *user_param)
  ******************************************************************************/
 void check_sys_data(struct perftest_comm *user_comm, struct perftest_parameters *user_param)
 {
+	int rc = 0;
 	int rem_cycle_buffer = 0;
 	int rem_cache_line_size = 0;
 
@@ -1817,17 +1821,27 @@ void check_sys_data(struct perftest_comm *user_comm, struct perftest_parameters 
 	int m_cache_line_size = hton_int(user_param->cache_line_size);
 
 	/*keep compatibility between older versions, without this feature.*/
-	if ( !(atof(user_param->rem_version) >= 5.32) ) {
+	if (!(atof(user_param->rem_version) >= 5.32)) {
 		return;
 	}
 
 	if (!user_param->dont_xchg_versions) {
-		if (ctx_xchg_data(user_comm,(void*)(&m_cycle_buffer),(void*)(&rem_cycle_buffer), sizeof(user_param->cycle_buffer))) {
-			fprintf(stderr," Failed to exchange Page Size data between server and client\n");
+		rc = ctx_xchg_data(user_comm,
+						   (void *)(&m_cycle_buffer),
+						   (void *)(&rem_cycle_buffer),
+						   sizeof(user_param->cycle_buffer));
+		if (rc) {
+			fprintf(stderr,
+					" Failed to exchange Page Size data between server and client\n");
 			exit(1);
 		}
-		if (ctx_xchg_data(user_comm,(void*)(&m_cache_line_size),(void*)(&rem_cache_line_size), sizeof(user_param->cache_line_size))) {
-			fprintf(stderr," Failed to exchange Cache Line Size data between server and client\n");
+		rc = ctx_xchg_data(user_comm,
+						   (void *)(&m_cache_line_size),
+						   (void *)(&rem_cache_line_size),
+						   sizeof(user_param->cache_line_size));
+		if (rc) {
+			fprintf(stderr,
+					" Failed to exchange Cache Line Size data between server and client\n");
 			exit(1);
 		}
 	}
@@ -1844,6 +1858,7 @@ void check_sys_data(struct perftest_comm *user_comm, struct perftest_parameters 
 		user_comm->rdma_ctx->buff_size = user_param->cycle_buffer;
 	}
 
+	return;
 }
 
 /******************************************************************************
